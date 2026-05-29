@@ -1,0 +1,173 @@
+# Gmail ile Giriş ve Admin Yetkili Site
+
+Aşağıdaki sistem şunları yapar:
+
+* Google/Gmail ile giriş yapılabilir
+* Sadece `unlugoktug3206@gmail.com` admin olur
+* Admin olmayanlar düzenleme yapamaz
+* Sen siteyi kontrol edebilirsin
+
+Bunun için Firebase kullanılır.
+
+---
+
+# 1. Firebase Kur
+
+Şuraya gir:
+
+[https://firebase.google.com/](https://firebase.google.com/)
+
+## Yapılacaklar
+
+* Yeni proje oluştur
+* Authentication aç
+* Google Sign-In etkinleştir
+* Web App oluştur
+* Sana verilen Firebase config kodunu kopyala
+
+---
+
+# 2. index.html
+
+```html
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Göktuğ Site</title>
+
+  <style>
+    body{
+      margin:0;
+      font-family:Arial;
+      background:#0d1117;
+      color:white;
+      text-align:center;
+    }
+
+    header{
+      padding:100px 20px;
+    }
+
+    button{
+      padding:15px 30px;
+      border:none;
+      border-radius:10px;
+      background:#238636;
+      color:white;
+      font-size:18px;
+      cursor:pointer;
+    }
+
+    .admin-panel{
+      display:none;
+      margin-top:50px;
+      padding:20px;
+      background:#161b22;
+    }
+
+    textarea{
+      width:80%;
+      height:150px;
+      margin-top:20px;
+      background:#21262d;
+      color:white;
+      border:none;
+      padding:15px;
+      border-radius:10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Göktuğ'un Sitesi</h1>
+  <p>Google ile giriş yap</p>
+
+  <button onclick="login()">Google ile Giriş Yap</button>
+
+  <h2 id="user"></h2>
+</header>
+
+<div class="admin-panel" id="adminPanel">
+  <h2>Admin Paneli</h2>
+
+  <p>Sadece admin düzenleme yapabilir.</p>
+
+  <textarea placeholder="Buraya yazı yaz..."></textarea>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "BURAYA_API_KEY",
+  authDomain: "BURAYA_DOMAIN",
+  projectId: "BURAYA_PROJECT_ID",
+  storageBucket: "BURAYA_BUCKET",
+  messagingSenderId: "BURAYA_SENDER_ID",
+  appId: "BURAYA_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+window.login = async function(){
+  await signInWithPopup(auth, provider);
+}
+
+onAuthStateChanged(auth, (user)=>{
+
+  if(user){
+    document.getElementById("user").innerText =
+      "Giriş yapıldı: " + user.email;
+
+    if(user.email === "unlugoktug3206@gmail.com"){
+      document.getElementById("adminPanel").style.display = "block";
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>
+```
+
+---
+
+# 3. Nasıl Çalışır?
+
+* Kullanıcı Google ile giriş yapar
+* Sistem Gmail adresini kontrol eder
+* Eğer adres:
+
+`unlugoktug3206@gmail.com`
+
+ise admin paneli açılır.
+
+Diğer kişiler sadece siteyi görür.
+
+---
+
+# 4. Siteyi Yayınlama
+
+Bunu GitHub Pages ile yayınlayabilirsin:
+
+* Yeni repo aç
+* index.html yükle
+* Settings → Pages
+* Deploy et
+
+Sonra siten şöyle olur:
+
+`https://kullaniciadi.github.io`
