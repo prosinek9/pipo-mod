@@ -1,0 +1,509 @@
+Aşağıdaki kodu bir metin belgesine kopyala, adını index.html yap:
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Steam Injector — Ücretsiz 50 Oyun</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0e14;
+    --panel: #1b2838;
+    --steam: #66c0f4;
+    --green: #10b981;
+    --cyan: #06b6d4;
+    --red: #ef4444;
+    --yellow: #eab308;
+    --text: #ffffff;
+    --muted: #c7d5e0;
+    --dim: #4b5563;
+  }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+  }
+  /* Background grid */
+  body::before {
+    content: "";
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(102,192,244,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(102,192,244,0.5) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.08;
+  }
+  /* Vignette */
+  body::after {
+    content: "";
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(10,14,20,0) 0%, rgba(10,14,20,0.9) 75%, var(--bg) 100%);
+  }
+  /* CRT scanlines */
+  .crt {
+    position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0.18;
+    background-image:
+      linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.35) 50%),
+      linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+    background-size: 100% 4px, 3px 100%;
+  }
+  .heading { font-family: "Rajdhani", sans-serif; letter-spacing: 0.02em; }
+  .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  /* ===== LANDING ===== */
+  .landing { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; position: relative; z-index: 10; }
+  .topbar { position: absolute; top: 24px; left: 24px; right: 24px; display: flex; justify-content: space-between; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3em; color: rgba(102,192,244,0.7); }
+  .pulse { display: inline-block; width: 8px; height: 8px; border-radius: 999px; background: var(--green); animation: pulse 1.4s infinite; margin-right: 8px; vertical-align: middle; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+  .badge { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(6,182,212,0.4); background: rgba(10,14,20,0.8); padding: 8px 16px; font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--cyan); margin-bottom: 32px; backdrop-filter: blur(8px); }
+
+  h1.title { font-family: "Rajdhani", sans-serif; font-size: clamp(48px, 9vw, 96px); font-weight: 700; line-height: 0.95; text-transform: uppercase; text-align: center; }
+  h1.title .top { color: var(--steam); display: block; }
+  h1.title .bottom { display: block; background: linear-gradient(90deg, var(--green), var(--cyan), var(--steam)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  .subtitle { margin-top: 24px; max-width: 580px; text-align: center; color: rgba(199,213,224,0.7); font-size: 14px; line-height: 1.6; }
+  .subtitle b { color: var(--green); font-weight: 600; }
+
+  form { margin-top: 56px; width: 100%; max-width: 640px; }
+  .field { position: relative; }
+  .field label { position: absolute; top: -22px; left: 0; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cyan); }
+  .input-row { display: flex; align-items: center; border-bottom: 2px solid rgba(6,182,212,0.6); padding: 12px 0; transition: border-color 0.25s; }
+  .input-row:focus-within { border-color: var(--green); }
+  .input-row svg { flex-shrink: 0; margin-right: 12px; color: var(--cyan); }
+  .input-row input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: inherit; font-size: 28px; padding: 4px 0; }
+  .input-row input::placeholder { color: var(--dim); }
+  .caret { display: inline-block; width: 3px; height: 32px; background: var(--green); margin-left: 8px; animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 0%,49%{opacity:1;} 50%,100%{opacity:0;} }
+
+  .btn { margin-top: 28px; width: 100%; border: 2px solid var(--green); background: var(--panel); color: var(--green); padding: 16px 32px; font-family: inherit; font-size: 13px; letter-spacing: 0.4em; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 15px rgba(16,185,129,0.35); transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .btn:hover:not(:disabled) { background: var(--green); color: var(--bg); box-shadow: 0 0 30px rgba(16,185,129,0.9); }
+  .btn:disabled { border-color: var(--dim); color: var(--dim); cursor: not-allowed; box-shadow: none; }
+
+  .features { margin-top: 56px; width: 100%; max-width: 800px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 640px) { .features { grid-template-columns: 1fr; } }
+  .feature { display: flex; align-items: center; gap: 12px; border: 1px solid var(--panel); background: rgba(10,14,20,0.7); padding: 12px 16px; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(199,213,224,0.8); }
+  .feature svg { color: var(--steam); flex-shrink: 0; }
+
+  .footer-note { position: absolute; bottom: 16px; left: 24px; right: 24px; text-align: center; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dim); }
+
+  /* ===== HACKING ===== */
+  .hacking { padding: 40px 16px; }
+  .panel { border: 1px solid rgba(6,182,212,0.3); background: rgba(10,14,20,0.8); backdrop-filter: blur(8px); padding: 20px; margin-bottom: 24px; }
+  .panel.green { border-color: rgba(16,185,129,0.3); box-shadow: 0 0 25px rgba(16,185,129,0.15); padding: 32px; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .label { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; }
+  .user-name { font-family: "Rajdhani", sans-serif; font-size: 22px; font-weight: 600; color: var(--text); }
+  .user-tag { color: var(--green); font-size: 12px; margin-left: 8px; }
+
+  .pct { font-family: "Rajdhani", sans-serif; font-size: clamp(56px, 10vw, 84px); font-weight: 700; line-height: 1; color: var(--text); }
+  .pct .sign { color: var(--green); }
+  .time-block { display: grid; grid-template-columns: auto auto; gap: 24px; }
+  .time-val { font-family: "Rajdhani", sans-serif; font-size: 24px; margin-top: 4px; }
+  .time-val.cyan { color: var(--steam); }
+
+  .progress-track { margin-top: 24px; height: 12px; background: var(--panel); position: relative; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--cyan), var(--steam)); box-shadow: 0 0 15px rgba(16,185,129,0.7); transition: width 0.1s linear; }
+
+  .dashboard { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .dashboard { grid-template-columns: 1fr; } }
+
+  .terminal { background: rgba(0,0,0,0.7); border: 1px solid rgba(6,182,212,0.3); padding: 16px; }
+  .terminal-head { display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--panel); margin-bottom: 12px; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cyan); }
+  .term-dots { display: flex; gap: 6px; }
+  .term-dots span { width: 10px; height: 10px; border-radius: 999px; }
+  .dot-r { background: var(--red); } .dot-y { background: var(--yellow); } .dot-g { background: var(--green); }
+  .term-body { height: 340px; overflow-y: auto; font-size: 12px; line-height: 1.55; color: var(--green); scrollbar-width: thin; scrollbar-color: var(--green) var(--bg); }
+  .term-body::-webkit-scrollbar { width: 6px; }
+  .term-body::-webkit-scrollbar-thumb { background: var(--green); }
+  .term-line { white-space: pre-wrap; word-break: break-word; }
+  .term-line .stamp { color: var(--dim); margin-right: 6px; }
+  .term-line.ok { color: var(--green); }
+  .term-line.warn { color: var(--yellow); }
+  .term-line.info { color: var(--steam); }
+  .term-line.text { color: var(--muted); }
+  .term-caret { display: inline-block; width: 8px; height: 14px; background: var(--green); animation: blink 1s steps(2) infinite; vertical-align: middle; }
+
+  .stats { display: flex; flex-direction: column; gap: 16px; }
+  .stat { border: 1px solid var(--panel); background: rgba(10,14,20,0.8); padding: 16px; }
+  .stat .label { color: var(--dim); }
+  .stat .val { font-family: "Rajdhani", sans-serif; font-size: 22px; margin-top: 4px; font-weight: 600; }
+
+  /* ===== SUCCESS ===== */
+  .success { padding: 48px 16px; }
+  .hero { position: relative; overflow: hidden; border: 2px solid var(--green); background: rgba(10,14,20,0.8); padding: 48px 24px; text-align: center; box-shadow: 0 0 40px rgba(16,185,129,0.35); backdrop-filter: blur(8px); }
+  .hero::before { content:""; position:absolute; top:-40px; right:-40px; width:200px; height:200px; border-radius:999px; background: rgba(16,185,129,0.2); filter: blur(60px); }
+  .hero::after { content:""; position:absolute; bottom:-40px; left:-40px; width:200px; height:200px; border-radius:999px; background: rgba(102,192,244,0.2); filter: blur(60px); }
+  .hero-inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+  .hero h1 { font-family: "Rajdhani", sans-serif; font-size: clamp(48px, 9vw, 88px); font-weight: 700; text-transform: uppercase; line-height: 1; }
+  .hero h1 .gn { color: var(--green); display: block; }
+  .hero p { max-width: 640px; margin-top: 20px; color: rgba(199,213,224,0.85); font-size: 14px; line-height: 1.7; }
+  .hero p .u { color: var(--steam); } .hero p .g { color: var(--green); }
+  .metrics { margin-top: 32px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; max-width: 720px; }
+  @media (max-width: 640px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+  .metric { border: 1px solid var(--panel); background: rgba(0,0,0,0.4); padding: 14px; text-align: left; }
+  .metric .v { font-family: "Rajdhani", sans-serif; font-size: 24px; font-weight: 700; margin-top: 6px; }
+  .metric .l { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dim); margin-top: 2px; }
+  .restart-btn { margin-top: 32px; border: 2px solid var(--steam); background: transparent; color: var(--steam); padding: 12px 24px; font-family: inherit; font-size: 12px; letter-spacing: 0.4em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 12px; }
+  .restart-btn:hover { background: var(--steam); color: var(--bg); box-shadow: 0 0 20px rgba(102,192,244,0.8); }
+
+  .lib-head { margin: 56px 0 16px; display: flex; justify-content: space-between; align-items: flex-end; }
+  .lib-head .small { font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--cyan); }
+  .lib-head h2 { font-family: "Rajdhani", sans-serif; font-size: 32px; text-transform: uppercase; margin-top: 4px; font-weight: 700; }
+  .lib-head .count { font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(199,213,224,0.6); }
+
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  @media (max-width: 1024px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 768px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 480px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .card { position: relative; aspect-ratio: 3/4; overflow: hidden; border: 1px solid var(--panel); background: var(--bg); opacity: 0; animation: reveal 0.55s ease-out forwards; }
+  @keyframes reveal { from { opacity: 0; transform: translateY(14px) scale(0.96); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+  .card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+  .card:hover img { transform: scale(1.1); }
+  .card .shade { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg), rgba(10,14,20,0.4) 50%, transparent); }
+  .card .tag { position: absolute; top: 8px; left: 8px; border: 1px solid rgba(16,185,129,0.6); background: rgba(0,0,0,0.7); padding: 2px 8px; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); }
+  .card .meta { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px; }
+  .card .meta .t { font-family: "Rajdhani", sans-serif; font-size: 14px; font-weight: 600; text-transform: uppercase; line-height: 1.2; }
+  .card .meta .b { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(199,213,224,0.7); margin-top: 6px; }
+  .card .meta .b .size { color: var(--steam); }
+
+  .end-note { margin-top: 48px; text-align: center; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dim); }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="crt"></div>
+
+<!-- ============ LANDING ============ -->
+<section id="landing" class="landing">
+  <div class="topbar">
+    <span><span class="pulse"></span>steam_injector // online</span>
+    <span style="display:none" class="d-sm">v4.2.1 — build 2026.02</span>
+  </div>
+
+  <div class="badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    ücretsiz · resmi olmayan · 2026 sürümü
+  </div>
+
+  <h1 class="title">
+    <span class="top">STEAM</span>
+    <span class="bottom">INJECTOR</span>
+  </h1>
+
+  <p class="subtitle">
+    50 premium oyunu hesabına yükleyen tek tıkla çalışan enjektör.<br/>
+    Kullanıcı adını gir, <b>ENTER</b>'a bas ve gerisini biz halledelim.
+  </p>
+
+  <form id="form" autocomplete="off">
+    <div class="field">
+      <label for="username">&gt; steam_kullanici_adi:</label>
+      <div class="input-row">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <input id="username" type="text" placeholder="ornek_kullanici_42" maxlength="32" spellcheck="false" />
+        <span class="caret"></span>
+      </div>
+    </div>
+    <button id="submitBtn" class="btn" type="submit" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      enjeksiyonu başlat
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transform:rotate(180deg)"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </button>
+  </form>
+
+  <div class="features">
+    <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="15" cy="12" r="1"/><circle cx="18" cy="10" r="1"/></svg>50 AAA oyun</div>
+    <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>VAC bypass</div>
+    <div class="feature"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>Anonim oturum</div>
+  </div>
+
+  <p class="footer-note">// bu site bir şaka projesidir. valve, steam veya gerçek hesaplarla ilgisi yoktur.</p>
+</section>
+
+<!-- ============ HACKING ============ -->
+<section id="hacking" class="hacking hidden">
+  <div class="container">
+    <div class="panel row">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" style="animation:pulse 1.4s infinite"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <div>
+          <div class="label" style="color:var(--cyan)">aktif oturum</div>
+          <div class="user-name"><span id="userName2"></span><span class="user-tag">@steam_injector</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:20px;font-size:12px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(199,213,224,0.8)">
+        <span>📡 1337 mbps</span>
+        <span style="color:var(--red)">☠ vac: bypassed</span>
+      </div>
+    </div>
+
+    <div class="panel green">
+      <div class="row" style="align-items:flex-end">
+        <div>
+          <div class="label" style="color:var(--green)">enjeksiyon i̇lerlemesi</div>
+          <div class="pct"><span id="pct">0.0</span><span class="sign">%</span></div>
+        </div>
+        <div class="time-block">
+          <div>
+            <div class="label" style="color:var(--dim)">geçen</div>
+            <div class="time-val" id="elapsedT">00:00</div>
+          </div>
+          <div>
+            <div class="label" style="color:var(--dim)">kalan</div>
+            <div class="time-val cyan" id="remainT">05:00</div>
+          </div>
+        </div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="row" style="margin-top:14px;font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(199,213,224,0.6)">
+        <span>yüklenen oyunlar: <span id="installedCount" style="color:var(--green)">0 / 50</span></span>
+        <span>çıkma! i̇şlem yarıda kesilirse hesabın loklanabilir.</span>
+      </div>
+    </div>
+
+    <div class="dashboard">
+      <div class="terminal">
+        <div class="terminal-head">
+          <span>&gt; root@steam-injector ~</span>
+          <div class="term-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <div class="term-body" id="termBody"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="label">cpu</div><div class="val" id="cpu" style="color:var(--green)">0%</div></div>
+        <div class="stat"><div class="label">ram</div><div class="val" id="ram" style="color:var(--cyan)">0%</div></div>
+        <div class="stat"><div class="label">ağ</div><div class="val" id="net" style="color:var(--steam)">0 mbps</div></div>
+        <div class="stat"><div class="label">paketler</div><div class="val" id="pkt" style="color:var(--green)">0</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SUCCESS ============ -->
+<section id="success" class="success hidden">
+  <div class="container">
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="badge" style="color:var(--green);border-color:rgba(16,185,129,0.4)">✓ i̇şlem başarılı</div>
+        <h1><span class="gn">50 OYUN</span>YÜKLENDİ!</h1>
+        <p>
+          <span class="u" id="userName3"></span> hesabına toplam
+          <span class="g">50 premium oyun</span> başarıyla enjekte edildi.
+          Steam istemcisini yeniden başlat ve giriş yap; kütüphanende seni bekliyorlar.
+        </p>
+        <div class="metrics">
+          <div class="metric"><div class="v">50</div><div class="l">oyun</div></div>
+          <div class="metric"><div class="v">138</div><div class="l">dlc</div></div>
+          <div class="metric"><div class="v">2.471</div><div class="l">achievement</div></div>
+          <div class="metric"><div class="v">₺48.290</div><div class="l">değeri</div></div>
+        </div>
+        <button class="restart-btn" id="restartBtn">↻ başka bir hesap dene</button>
+      </div>
+    </div>
+
+    <div class="lib-head">
+      <div>
+        <div class="small">// yeni kütüphanen</div>
+        <h2>yüklenen oyunlar</h2>
+      </div>
+      <div class="count">toplam 50 / 50</div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    <p class="end-note">// şaka amaçlı bir projedir. hiçbir oyun gerçekten yüklenmedi. paylaş ve eğlen.</p>
+  </div>
+</section>
+
+<script>
+const GAMES = [
+  "Counter-Strike 2","Dota 2","Grand Theft Auto V","Cyberpunk 2077","The Witcher 3: Wild Hunt",
+  "Red Dead Redemption 2","Elden Ring","Hogwarts Legacy","Baldur's Gate 3","Hollow Knight",
+  "Hades","Portal 2","Half-Life: Alyx","Team Fortress 2","Left 4 Dead 2",
+  "Dark Souls III","Sekiro: Shadows Die Twice","Bloodborne","Stardew Valley","Terraria",
+  "Minecraft","Subnautica","DOOM Eternal","DOOM (2016)","Wolfenstein II",
+  "Resident Evil 4 Remake","Resident Evil Village","Dead Space","Horizon Zero Dawn","God of War",
+  "Marvel's Spider-Man","Sons of the Forest","Rust","ARK: Survival Evolved","PUBG: Battlegrounds",
+  "Apex Legends","Valorant","Rainbow Six Siege","Battlefield 2042","Call of Duty: Warzone",
+  "FIFA 24","F1 24","Forza Horizon 5","Need for Speed Unbound","Microsoft Flight Simulator",
+  "Euro Truck Simulator 2","Cities: Skylines II","Civilization VI","Total War: WARHAMMER III","Age of Empires IV"
+];
+const COVERS = [
+  "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80",
+  "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&q=80",
+  "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=600&q=80",
+  "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=600&q=80",
+  "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=600&q=80",
+  "https://images.unsplash.com/photo-1556438064-2d7646166914?w=600&q=80",
+  "https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=600&q=80",
+  "https://images.unsplash.com/photo-1606503153255-59d8b8b82176?w=600&q=80",
+  "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=600&q=80",
+  "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=600&q=80"
+];
+const SIZES = ["12.4 GB","47.8 GB","62.1 GB","8.2 GB","92.6 GB","24.7 GB","31.5 GB","104.3 GB"];
+
+const TOTAL_MS = 5 * 60 * 1000; // 5 dakika
+const TICK = 100;
+const LOG_INTERVAL = 350;
+
+const $ = (id) => document.getElementById(id);
+const form = $("form"), input = $("username"), btn = $("submitBtn");
+
+input.addEventListener("input", () => { btn.disabled = !input.value.trim(); });
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const u = input.value.trim();
+  if (!u) return;
+  startHacking(u);
+});
+
+function formatTime(ms) {
+  const s = Math.max(0, Math.floor(ms/1000));
+  const m = Math.floor(s/60), r = s%60;
+  return String(m).padStart(2,"0") + ":" + String(r).padStart(2,"0");
+}
+
+function buildLogPool(username) {
+  return [
+    "> initializing steam_injector v4.2.1...",
+    "> hedef kullanıcı: " + username,
+    "> steam api bağlantısı kuruluyor...",
+    "> [OK] valve cdn endpoint bulundu: cdn.akamai.steamstatic.com",
+    "> güvenlik duvarı analiz ediliyor...",
+    "> [WARN] vac koruma aktif, bypass uygulanıyor...",
+    "> [OK] bypass başarılı.",
+    "> oturum belirteci taklit ediliyor...",
+    "> [OK] kimlik doğrulama atlatıldı.",
+    "> kütüphane manifesti alınıyor...",
+    "> Counter-Strike 2 lisansı ekleniyor...",
+    "> [OK] appid 730 hesaba bağlı.",
+    "> Dota 2 lisansı ekleniyor...",
+    "> [OK] appid 570 hesaba bağlı.",
+    "> Grand Theft Auto V lisansı ekleniyor...",
+    "> [OK] appid 271590 hesaba bağlı.",
+    "> Cyberpunk 2077 lisansı ekleniyor...",
+    "> Elden Ring lisansı ekleniyor...",
+    "> Red Dead Redemption 2 lisansı ekleniyor...",
+    "> [INFO] manifest checksum doğrulandı.",
+    "> dlc paketleri ekleniyor...",
+    "> [OK] tüm dlc'ler aktif.",
+    "> envanter senkronize ediliyor...",
+    "> [WARN] anomali tespit edildi, yeniden deneniyor...",
+    "> [OK] anomali giderildi.",
+    "> achievement listesi import ediliyor...",
+    "> bulut kayıtları mock ediliyor...",
+    "> [INFO] toplam 50 oyun işlendi.",
+    "> son temizlik adımları çalıştırılıyor...",
+    "> log dosyaları siliniyor...",
+    "> [OK] iz bırakmadan çıkılıyor."
+  ];
+}
+
+function startHacking(username) {
+  $("landing").classList.add("hidden");
+  $("hacking").classList.remove("hidden");
+  $("userName2").textContent = username;
+
+  const pool = buildLogPool(username);
+  const started = Date.now();
+  const termBody = $("termBody");
+  const progressFill = $("progressFill");
+
+  // logs
+  const logTimer = setInterval(() => {
+    let line;
+    if (Math.random() < 0.7) {
+      line = pool[Math.floor(Math.random() * pool.length)];
+    } else {
+      const g = GAMES[Math.floor(Math.random() * GAMES.length)];
+      const verbs = ["lisansı ekleniyor","manifest doğrulanıyor","checksum hesaplanıyor","depo dosyaları aktarılıyor","achievement listesi yükleniyor"];
+      line = "> " + g + " " + verbs[Math.floor(Math.random() * verbs.length)] + "...";
+    }
+    const stamp = new Date().toLocaleTimeString("tr-TR", { hour12: false });
+    const cls = line.includes("[OK]") ? "ok" : line.includes("[WARN]") ? "warn" : line.includes("[INFO]") ? "info" : "text";
+    const div = document.createElement("div");
+    div.className = "term-line " + cls;
+    div.innerHTML = '<span class="stamp">['+stamp+']</span>' + line;
+    termBody.appendChild(div);
+    // limit
+    while (termBody.children.length > 80) termBody.removeChild(termBody.firstChild);
+    termBody.scrollTop = termBody.scrollHeight;
+  }, LOG_INTERVAL);
+
+  // progress
+  const tick = setInterval(() => {
+    const e = Date.now() - started;
+    const done = e >= TOTAL_MS;
+    const ms = done ? TOTAL_MS : e;
+    const pct = (ms / TOTAL_MS) * 100;
+    progressFill.style.width = pct + "%";
+    $("pct").textContent = pct.toFixed(1);
+    $("elapsedT").textContent = formatTime(ms);
+    $("remainT").textContent = formatTime(TOTAL_MS - ms);
+    $("installedCount").textContent = Math.min(50, Math.floor((pct/100)*50)) + " / 50";
+
+    // fake stats
+    $("cpu").textContent = (58 + Math.sin(ms/800)*30).toFixed(1) + "%";
+    $("ram").textContent = (42 + Math.cos(ms/600)*25).toFixed(1) + "%";
+    $("net").textContent = (900 + Math.sin(ms/400)*350).toFixed(0) + " mbps";
+    $("pkt").textContent = Math.floor(ms/30);
+
+    if (done) {
+      clearInterval(tick);
+      clearInterval(logTimer);
+      setTimeout(() => showSuccess(username), 600);
+    }
+  }, TICK);
+}
+
+function showSuccess(username) {
+  $("hacking").classList.add("hidden");
+  $("success").classList.remove("hidden");
+  $("userName3").textContent = username;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  const grid = $("grid");
+  grid.innerHTML = "";
+  GAMES.forEach((title, i) => {
+    const cover = COVERS[i % COVERS.length];
+    const size = SIZES[i % SIZES.length];
+    const delay = (i % 12) * 60;
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.animationDelay = delay + "ms";
+    card.innerHTML = `
+      <img src="${cover}" alt="${title}" loading="lazy" />
+      <div class="shade"></div>
+      <div class="tag">installed</div>
+      <div class="meta">
+        <div class="t">${title}</div>
+        <div class="b"><span>#${String(i+1).padStart(2,"0")}</span><span class="size">${size}</span></div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+$("restartBtn").addEventListener("click", () => {
+  $("success").classList.add("hidden");
+  $("landing").classList.remove("hidden");
+  input.value = "";
+  btn.disabled = true;
+  $("termBody").innerHTML = "";
+  $("progressFill").style.width = "0%";
+});
+</script>
+</body>
+</html>
